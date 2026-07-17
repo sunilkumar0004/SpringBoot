@@ -31,4 +31,11 @@ public class StudentController {
                 .status(201)
                 .body(result);
     }
+    @GetMapping("/get/{id}")
+    public ResponseEntity<?> getStudent(@PathVariable int id){
+        Student student = studentService.getStudentById(id);
+        return ResponseEntity
+                .status(200)
+                .body(student);
+    }
 }
