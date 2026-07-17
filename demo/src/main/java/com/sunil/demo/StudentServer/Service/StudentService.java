@@ -33,4 +33,30 @@ public class StudentService {
     public Student getStudentById(int id){
         return studentRepository.findById(id).orElse( null);
     }
+
+    public Student updateStudent(int id, Student updatedStudent) {
+
+        Student existingStudent = studentRepository.findById(id).orElse(null);
+
+        if (existingStudent == null) {
+            return null;
+        }
+
+        existingStudent.setName(updatedStudent.getName());
+        existingStudent.setAge(updatedStudent.getAge());
+        existingStudent.setDepartment(updatedStudent.getDepartment());
+
+        return studentRepository.save(existingStudent);
+    }
+    public boolean deleteStudent(int id) {
+
+        Student student = studentRepository.findById(id).orElse(null);
+
+        if (student == null) {
+            return false;
+        }
+
+        studentRepository.delete(student);
+        return true;
+    }
 }

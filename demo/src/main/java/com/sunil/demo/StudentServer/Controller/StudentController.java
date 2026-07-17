@@ -38,4 +38,35 @@ public class StudentController {
                 .status(200)
                 .body(student);
     }
+    @PutMapping("/update/{id}")
+    public ResponseEntity<?> updateStudent(@PathVariable int id,
+                                           @RequestBody Student student) {
+
+        Student updatedStudent = studentService.updateStudent(id, student);
+
+        if (updatedStudent == null) {
+            return ResponseEntity
+                    .status(404)
+                    .body("Student not found");
+        }
+
+        return ResponseEntity
+                .status(200)
+                .body(updatedStudent);
+    }
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<?> deleteStudent(@PathVariable int id) {
+
+        boolean deleted = studentService.deleteStudent(id);
+
+        if (!deleted) {
+            return ResponseEntity
+                    .status(404)
+                    .body("Student not found");
+        }
+
+        return ResponseEntity
+                .status(200)
+                .body("Student deleted successfully");
+    }
 }
