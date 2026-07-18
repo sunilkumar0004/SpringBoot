@@ -66,7 +66,7 @@ public class Student {
 
     public void setDepartment(String department) {
         this.department = department;
-    }
+    } 
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public LocalDateTime getUpdatedAt() { return updatedAt; }
