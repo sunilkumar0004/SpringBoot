@@ -2,10 +2,14 @@ package com.sunil.demo.StudentServer.Service;
 
 import com.sunil.demo.StudentServer.DTO.CreateStudentRequestDTO;
 import com.sunil.demo.StudentServer.DTO.CreateStudentResponseDTO;
+import com.sunil.demo.StudentServer.DTO.UpdateStudentRequestDTO;
+import com.sunil.demo.StudentServer.DTO.UpdateStudentResponseDTO;
 import com.sunil.demo.StudentServer.Entity.Student;
 import com.sunil.demo.StudentServer.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 
 @Service
 public class StudentService {
@@ -17,68 +21,95 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
-    // Create Student
-    public CreateStudentResponseDTO studentValidate(CreateStudentRequestDTO requestDTO) {
+    public CreateStudentResponseDTO studentValidate(
+            CreateStudentRequestDTO createStudentRequestDTO) {
 
-        if (requestDTO == null) {
+        if (createStudentRequestDTO == null ||
+                createStudentRequestDTO.getName() == null ||
+                createStudentRequestDTO.getName().trim().isEmpty() ||
+                createStudentRequestDTO.getAge() <= 0 ||
+                createStudentRequestDTO.getDepartment() == null ||
+                createStudentRequestDTO.getDepartment().trim().isEmpty()) {
+
             return null;
         }
 
-        if (requestDTO.getName() == null || requestDTO.getName().trim().isEmpty()) {
-            return null;
-        }
-
-        if (requestDTO.getAge() <= 0) {
-            return null;
-        }
-
-        Student student = new Student();
-
-        student.setName(requestDTO.getName());
-        student.setAge(requestDTO.getAge());
-        student.setDepartment(requestDTO.getDepartment());
-
+        Student student = mapToStudent(createStudentRequestDTO);
         Student savedStudent = studentRepository.save(student);
 
-        return new CreateStudentResponseDTO(
-                savedStudent.getId(),
-                savedStudent.getName(),
-                savedStudent.getAge(),
-                savedStudent.getDepartment()
-        );
+        return mapToResponseDTO(savedStudent);
     }
 
-    // Get Student
     public Student getStudentById(int id) {
         return studentRepository.findById(id).orElse(null);
     }
 
-    // Update Student
-    public Student updateStudent(int id, Student updatedStudent) {
+    public Student saveStudent(Student student) {
+        return studentRepository.save(student);
+    }
 
-        Student existingStudent = studentRepository.findById(id).orElse(null);
+    public UpdateStudentResponseDTO updateStudent(
+            int id,
+            UpdateStudentRequestDTO updateStudentRequestDTO) {
+
+        Student existingStudent =
+                studentRepository.findById(id).orElse(null);
 
         if (existingStudent == null) {
             return null;
         }
 
-        existingStudent.setName(updatedStudent.getName());
-        existingStudent.setAge(updatedStudent.getAge());
-        existingStudent.setDepartment(updatedStudent.getDepartment());
+        existingStudent.setName(updateStudentRequestDTO.getName());
+        existingStudent.setAge(updateStudentRequestDTO.getAge());
+        existingStudent.setUpdatedAt(LocalDateTime.now());
 
-        return studentRepository.save(existingStudent);
+        Student savedStudent = studentRepository.save(existingStudent);
+
+        return new UpdateStudentResponseDTO(
+                savedStudent.getId(),
+                savedStudent.getName(),
+                savedStudent.getAge(),
+                savedStudent.getDepartment(),
+                "Student information is updated"
+        );
     }
 
-    // Delete Student
     public boolean deleteStudent(int id) {
 
-        Student student = studentRepository.findById(id).orElse(null);
+        Student student =
+                studentRepository.findById(id).orElse(null);
 
         if (student == null) {
             return false;
         }
 
-        studentRepository.delete(student);
+        studentRepository.deleteById(id);
         return true;
+    }
+
+    private Student mapToStudent(
+            CreateStudentRequestDTO createStudentRequestDTO) {
+
+        Student student = new Student();
+
+        student.setName(createStudentRequestDTO.getName());
+        student.setAge(createStudentRequestDTO.getAge());
+        student.setDepartment(createStudentRequestDTO.getDepartment());
+        student.setCreatedAt(LocalDateTime.now());
+        student.setUpdatedAt(LocalDateTime.now());
+
+        return student;
+    }
+
+    private CreateStudentResponseDTO mapToResponseDTO(Student student) {
+
+        return new CreateStudentResponseDTO(
+                student.getId(),
+                student.getName(),
+                student.getAge(),
+                student.getDepartment(),
+                student.getCreatedAt(),
+                student.getUpdatedAt()
+        );
     }
 }

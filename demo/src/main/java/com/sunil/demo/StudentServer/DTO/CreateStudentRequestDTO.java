@@ -1,10 +1,5 @@
 package com.sunil.demo.StudentServer.DTO;
 
-import jakarta.persistence.Column;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import java.time.LocalDateTime;
 public class CreateStudentRequestDTO {
 
     private String name;
@@ -12,6 +7,16 @@ public class CreateStudentRequestDTO {
     private String department;
 
     public CreateStudentRequestDTO() {
+    }
+
+    public CreateStudentRequestDTO(
+            String name,
+            int age,
+            String department) {
+
+        this.name = name;
+        this.age = age;
+        this.department = department;
     }
 
     public String getName() {

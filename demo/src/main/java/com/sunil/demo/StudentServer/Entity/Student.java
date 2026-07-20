@@ -1,17 +1,15 @@
 package com.sunil.demo.StudentServer.Entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "students")
 public class Student {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     private String name;
@@ -19,21 +17,26 @@ public class Student {
     private int age;
 
     private String department;
-    @CreationTimestamp
-    @Column(updatable = false)
+
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     private LocalDateTime updatedAt;
 
     public Student() {
     }
 
-    public Student(int id, String name, int age, String department) {
-        this.id = id;
+    public Student(
+            String name,
+            int age,
+            String department,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt) {
+
         this.name = name;
         this.age = age;
         this.department = department;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
     public int getId() {
@@ -66,8 +69,21 @@ public class Student {
 
     public void setDepartment(String department) {
         this.department = department;
-    } 
+    }
 
-    public LocalDateTime getCreatedAt() { return createdAt; }
-    public LocalDateTime getUpdatedAt() { return updatedAt; }
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 }

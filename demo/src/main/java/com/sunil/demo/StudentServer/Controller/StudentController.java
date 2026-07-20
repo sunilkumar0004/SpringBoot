@@ -2,6 +2,9 @@ package com.sunil.demo.StudentServer.Controller;
 
 import com.sunil.demo.StudentServer.DTO.CreateStudentRequestDTO;
 import com.sunil.demo.StudentServer.DTO.CreateStudentResponseDTO;
+import com.sunil.demo.StudentServer.DTO.UpdateStudentRequestDTO;
+import com.sunil.demo.StudentServer.Repository.StudentRepository;
+import com.sunil.demo.StudentServer.DTO.UpdateStudentResponseDTO;
 import com.sunil.demo.StudentServer.Entity.Student;
 import com.sunil.demo.StudentServer.Service.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,24 +22,24 @@ public class StudentController {
         this.studentService = studentService;
     }
 
-    // Create Student
     @PostMapping("/create")
-    public ResponseEntity<?> storeStudent(@RequestBody CreateStudentRequestDTO requestDTO) {
+    public ResponseEntity<?> create(
+            @RequestBody CreateStudentRequestDTO createStudentRequestDTO) {
 
-        CreateStudentResponseDTO responseDTO = studentService.studentValidate(requestDTO);
+        CreateStudentResponseDTO saved =
+                studentService.studentValidate(createStudentRequestDTO);
 
-        if (responseDTO == null) {
+        if (saved == null) {
             return ResponseEntity
                     .status(400)
-                    .body("Student info is not valid");
+                    .body("Invalid student data");
         }
 
         return ResponseEntity
                 .status(201)
-                .body(responseDTO);
+                .body(saved);
     }
 
-    // Get Student
     @GetMapping("/get/{id}")
     public ResponseEntity<?> getStudent(@PathVariable int id) {
 
@@ -48,32 +51,26 @@ public class StudentController {
                     .body("Student not found");
         }
 
-        return ResponseEntity
-                .status(200)
-                .body(student);
+        return ResponseEntity.ok(student);
     }
 
-    // Update Student
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> updateStudent(@PathVariable int id,
-                                           @RequestBody Student student) {
+    public ResponseEntity<?> update(
+            @PathVariable int id,
+            @RequestBody UpdateStudentRequestDTO updateStudentRequestDTO) {
 
-        Student updatedStudent = studentService.updateStudent(id, student);
+        UpdateStudentResponseDTO updatedStudent =
+                studentService.updateStudent(id, updateStudentRequestDTO);
 
         if (updatedStudent == null) {
-            return ResponseEntity
-                    .status(404)
-                    .body("Student not found");
+            return ResponseEntity.status(404).body("Student not found");
         }
 
-        return ResponseEntity
-                .status(200)
-                .body(updatedStudent);
+        return ResponseEntity.ok(updatedStudent);
     }
 
-    // Delete Student
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> deleteStudent(@PathVariable int id) {
+    public ResponseEntity<?> delete(@PathVariable int id) {
 
         boolean deleted = studentService.deleteStudent(id);
 
@@ -83,8 +80,6 @@ public class StudentController {
                     .body("Student not found");
         }
 
-        return ResponseEntity
-                .status(200)
-                .body("Student deleted successfully");
+        return ResponseEntity.ok("Student deleted successfully");
     }
 }
