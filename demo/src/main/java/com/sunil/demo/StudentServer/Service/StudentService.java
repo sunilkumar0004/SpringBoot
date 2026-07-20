@@ -1,39 +1,59 @@
 package com.sunil.demo.StudentServer.Service;
 
-import com.sunil.demo.StudentServer.Repository.StudentRepository;
+import com.sunil.demo.StudentServer.DTO.CreateStudentRequestDTO;
+import com.sunil.demo.StudentServer.DTO.CreateStudentResponseDTO;
 import com.sunil.demo.StudentServer.Entity.Student;
+import com.sunil.demo.StudentServer.Repository.StudentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class StudentService {
 
-    StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
     @Autowired
-    public StudentService(StudentRepository studentRepository){
+    public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public Student studentValidate(Student student){
+    // Create Student
+    public CreateStudentResponseDTO studentValidate(CreateStudentRequestDTO requestDTO) {
 
-        int id = student.getId();
-        String name = student.getName();
-        String department = student.getDepartment();
-        int age = student.getAge();
-
-
-        if(id < 0 || name == null || department == null || age < 0){
+        if (requestDTO == null) {
             return null;
         }
 
-        studentRepository.save(student);
-        return student;
-    }
-    public Student getStudentById(int id){
-        return studentRepository.findById(id).orElse( null);
+        if (requestDTO.getName() == null || requestDTO.getName().trim().isEmpty()) {
+            return null;
+        }
+
+        if (requestDTO.getAge() <= 0) {
+            return null;
+        }
+
+        Student student = new Student();
+
+        student.setName(requestDTO.getName());
+        student.setAge(requestDTO.getAge());
+        student.setDepartment(requestDTO.getDepartment());
+
+        Student savedStudent = studentRepository.save(student);
+
+        return new CreateStudentResponseDTO(
+                savedStudent.getId(),
+                savedStudent.getName(),
+                savedStudent.getAge(),
+                savedStudent.getDepartment()
+        );
     }
 
+    // Get Student
+    public Student getStudentById(int id) {
+        return studentRepository.findById(id).orElse(null);
+    }
+
+    // Update Student
     public Student updateStudent(int id, Student updatedStudent) {
 
         Student existingStudent = studentRepository.findById(id).orElse(null);
@@ -48,6 +68,8 @@ public class StudentService {
 
         return studentRepository.save(existingStudent);
     }
+
+    // Delete Student
     public boolean deleteStudent(int id) {
 
         Student student = studentRepository.findById(id).orElse(null);
