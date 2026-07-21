@@ -5,6 +5,7 @@ public class UpdateStudentResponseDTO {
     private int id;
     private String name;
     private int age;
+    private String email;
     private String department;
     private String message;
 
@@ -15,12 +16,14 @@ public class UpdateStudentResponseDTO {
             int id,
             String name,
             int age,
+            String email,
             String department,
             String message) {
 
         this.id = id;
         this.name = name;
         this.age = age;
+        this.email = email;
         this.department = department;
         this.message = message;
     }
@@ -47,6 +50,14 @@ public class UpdateStudentResponseDTO {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getDepartment() {

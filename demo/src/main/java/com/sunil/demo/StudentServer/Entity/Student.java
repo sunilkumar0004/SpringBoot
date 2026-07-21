@@ -16,6 +16,8 @@ public class Student {
 
     private int age;
 
+    private String email;
+
     private String department;
 
     private LocalDateTime createdAt;
@@ -25,15 +27,16 @@ public class Student {
     public Student() {
     }
 
-    public Student(
-            String name,
-            int age,
-            String department,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt) {
+    public Student(String name,
+                   int age,
+                   String email,
+                   String department,
+                   LocalDateTime createdAt,
+                   LocalDateTime updatedAt) {
 
         this.name = name;
         this.age = age;
+        this.email = email;
         this.department = department;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -61,6 +64,14 @@ public class Student {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getDepartment() {

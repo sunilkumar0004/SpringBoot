@@ -7,6 +7,7 @@ public class CreateStudentResponseDTO {
     private int id;
     private String name;
     private int age;
+    private String email;
     private String department;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -18,6 +19,7 @@ public class CreateStudentResponseDTO {
             int id,
             String name,
             int age,
+            String email,
             String department,
             LocalDateTime createdAt,
             LocalDateTime updatedAt) {
@@ -25,6 +27,7 @@ public class CreateStudentResponseDTO {
         this.id = id;
         this.name = name;
         this.age = age;
+        this.email = email;
         this.department = department;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
@@ -52,6 +55,14 @@ public class CreateStudentResponseDTO {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getDepartment() {

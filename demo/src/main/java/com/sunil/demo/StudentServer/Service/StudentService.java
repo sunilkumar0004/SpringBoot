@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.regex.Pattern;
 
 @Service
 public class StudentService {
@@ -21,20 +22,27 @@ public class StudentService {
         this.studentRepository = studentRepository;
     }
 
+    private static final Pattern EMAIL_PATTERN = Pattern.compile(
+            "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$"
+    );
+
     public CreateStudentResponseDTO studentValidate(
             CreateStudentRequestDTO createStudentRequestDTO) {
 
-        if (createStudentRequestDTO == null ||
-                createStudentRequestDTO.getName() == null ||
-                createStudentRequestDTO.getName().trim().isEmpty() ||
-                createStudentRequestDTO.getAge() <= 0 ||
-                createStudentRequestDTO.getDepartment() == null ||
-                createStudentRequestDTO.getDepartment().trim().isEmpty()) {
+        if (createStudentRequestDTO == null
+                || createStudentRequestDTO.getName() == null
+                || createStudentRequestDTO.getName().trim().isEmpty()
+                || createStudentRequestDTO.getAge() <= 0
+                || createStudentRequestDTO.getDepartment() == null
+                || createStudentRequestDTO.getDepartment().trim().isEmpty()
+                || createStudentRequestDTO.getEmail() == null
+                || !EMAIL_PATTERN.matcher(createStudentRequestDTO.getEmail()).matches()) {
 
             return null;
         }
 
         Student student = mapToStudent(createStudentRequestDTO);
+
         Student savedStudent = studentRepository.save(student);
 
         return mapToResponseDTO(savedStudent);
@@ -59,8 +67,13 @@ public class StudentService {
             return null;
         }
 
+        if (!EMAIL_PATTERN.matcher(updateStudentRequestDTO.getEmail()).matches()) {
+            return null;
+        }
+
         existingStudent.setName(updateStudentRequestDTO.getName());
         existingStudent.setAge(updateStudentRequestDTO.getAge());
+        existingStudent.setEmail(updateStudentRequestDTO.getEmail());
         existingStudent.setUpdatedAt(LocalDateTime.now());
 
         Student savedStudent = studentRepository.save(existingStudent);
@@ -69,6 +82,7 @@ public class StudentService {
                 savedStudent.getId(),
                 savedStudent.getName(),
                 savedStudent.getAge(),
+                savedStudent.getEmail(),
                 savedStudent.getDepartment(),
                 "Student information is updated"
         );
@@ -84,17 +98,18 @@ public class StudentService {
         }
 
         studentRepository.deleteById(id);
+
         return true;
     }
 
-    private Student mapToStudent(
-            CreateStudentRequestDTO createStudentRequestDTO) {
+    private Student mapToStudent(CreateStudentRequestDTO dto) {
 
         Student student = new Student();
 
-        student.setName(createStudentRequestDTO.getName());
-        student.setAge(createStudentRequestDTO.getAge());
-        student.setDepartment(createStudentRequestDTO.getDepartment());
+        student.setName(dto.getName());
+        student.setAge(dto.getAge());
+        student.setEmail(dto.getEmail());
+        student.setDepartment(dto.getDepartment());
         student.setCreatedAt(LocalDateTime.now());
         student.setUpdatedAt(LocalDateTime.now());
 
@@ -107,6 +122,7 @@ public class StudentService {
                 student.getId(),
                 student.getName(),
                 student.getAge(),
+                student.getEmail(),
                 student.getDepartment(),
                 student.getCreatedAt(),
                 student.getUpdatedAt()
